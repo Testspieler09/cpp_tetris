@@ -9,7 +9,7 @@ PieceGenerator::PieceGenerator() : bagIndex(7) {
 
     // Fill initial preview
     for (int i = 0; i < 2; i++) {
-        this->preview[i] = getNextFromBag();
+        this->preview[i] = this->getNextFromBag();
     }
 }
 
@@ -33,7 +33,7 @@ void PieceGenerator::refillBag() {
 TetrominoType PieceGenerator::getNextFromBag() {
     // Refill bag if empty
     if (this->bagIndex >= 7) {
-        refillBag();
+        this->refillBag();
     }
 
     return this->bag[this->bagIndex++];
@@ -45,7 +45,7 @@ Tetromino PieceGenerator::getNext() {
 
     // Shift preview and add new piece at the end
     this->preview[0] = this->preview[1];
-    this->preview[1] = getNextFromBag();
+    this->preview[1] = this->getNextFromBag();
 
     // Create tetromino at spawn position
     return Tetromino(nextType, 3, 0);

@@ -24,6 +24,7 @@ private:
     // Frame timing for 60 ticks per second
     static constexpr float TARGET_TICK_RATE = 1.0f / 60.0f;
     float tickAccumulator;
+    float moveTimer = 0;
 
     // Helper rendering methods
     Color getColorForType(TetrominoType type) const;
@@ -32,6 +33,7 @@ private:
     void drawTetromino(const GameState& state);
     void drawGhostPiece(const GameState& state);
     void drawBoard(const GameState& state);
+    void drawCenteredPiece(TetrominoType type, int boxX, int boxY, int boxSize, float alpha);
     void drawHoldBox(const GameState& state);
     void drawNextBox(const GameState& state);
     void drawUI(const GameState& state);

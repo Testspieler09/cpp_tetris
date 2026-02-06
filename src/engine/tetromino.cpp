@@ -93,11 +93,11 @@ Tetromino::Tetromino()
 
 Tetromino::Tetromino(TetrominoType type, int startX, int startY)
     : type(type), orientation(Orientation::NORTH), x(startX), y(startY) {
-    updateShape();
+    this->updateShape();
 }
 
 void Tetromino::updateShape() {
-    getBaseShape(this->type, this->orientation, this->shape);
+    this->getBaseShape(this->type, this->orientation, this->shape);
 }
 
 void Tetromino::getShape(int outShape[4][4]) const {
@@ -106,7 +106,7 @@ void Tetromino::getShape(int outShape[4][4]) const {
 
 void Tetromino::setOrientation(Orientation newOrientation) {
     this->orientation = newOrientation;
-    updateShape();
+    this->updateShape();
 }
 
 void Tetromino::getBaseShape(TetrominoType type, Orientation orientation, int outShape[4][4]) {

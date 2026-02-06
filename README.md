@@ -45,10 +45,10 @@ This project follows a **loosely coupled** design with clear separation between 
 #### UI (`src/ui/`)
 
 - **Renderer** - Handles all raylib rendering and game loop
-  - Owns the main `while` loop
-  - Calls `game.update(deltaTime)` at 60 ticks/sec
-  - Translates input to `GameEvent` and calls `game.handleEvent()`
-  - Reads game state via `game.getState()` for rendering
+    - Owns the main `while` loop
+    - Calls `game.update(deltaTime)` at 60 ticks/sec
+    - Translates input to `GameEvent` and calls `game.handleEvent()`
+    - Reads game state via `game.getState()` for rendering
 
 ## Features
 
@@ -101,15 +101,19 @@ make cleanall   # Clean build files and raylib
 
 ## Controls
 
-| Key       | Action                   |
-| --------- | ------------------------ |
-| ←/→       | Move left/right          |
-| ↓         | Soft drop (faster fall)  |
-| ↑ / X     | Rotate clockwise         |
-| Z         | Rotate counter-clockwise |
-| Space     | Hard drop (instant fall) |
-| C / Shift | Hold/swap piece          |
-| R         | Restart game             |
+| Key   | Action                   |
+| ----- | ------------------------ |
+| ←/→   | Move left/right          |
+| ↓     | Soft drop (faster fall)  |
+| ↑     | Hard drop (instant fall) |
+| X     | Rotate clockwise         |
+| Z     | Rotate counter-clockwise |
+| Space | Hold/swap piece          |
+| R     | Restart game             |
+
+> [!NOTE]
+>
+> You can use vim keys `[h j k l]` instead of the arrow keys to move and drop the pieces
 
 ## Project Structure
 
@@ -166,19 +170,19 @@ Wall kicks are implemented according to the [Tetris Guideline](https://harddrop.
 ### Compilation errors about raylib.h
 
 - raylib didn't build. Try:
-  ```bash
-  cd external/raylib/src
-  make PLATFORM=PLATFORM_DESKTOP
-  cd ../../..
-  make
-  ```
+    ```bash
+    cd external/raylib/src
+    make PLATFORM=PLATFORM_DESKTOP
+    cd ../../..
+    make
+    ```
 
 ### Linker errors on macOS
 
 - Make sure you have Xcode Command Line Tools:
-  ```bash
-  xcode-select --install
-  ```
+    ```bash
+    xcode-select --install
+    ```
 
 ### Need to rebuild everything?
 

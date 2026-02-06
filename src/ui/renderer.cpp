@@ -1,4 +1,5 @@
 #include "ui/renderer.hpp"
+#include "engine/igame_engine.hpp"
 #include "engine/tetromino.hpp"
 #include "raylib.h"
 #include <cstring>
@@ -21,7 +22,7 @@ Renderer::Renderer(IGameEngine& game, int width, int height, int cellSize)
     InitWindow(this->screenWidth, this->screenHeight, "Tetris");
     SetTargetFPS(60);
 
-    setupDefaultKeyMapping();
+    this->setupDefaultKeyMapping();
 }
 
 Renderer::~Renderer() {
@@ -29,24 +30,24 @@ Renderer::~Renderer() {
 }
 
 void Renderer::setupDefaultKeyMapping() {
-    mapKey(KEY_LEFT, GameEvent::MOVE_LEFT);
-    mapKey(KEY_H, GameEvent::MOVE_LEFT);
+    this->mapKey(KEY_LEFT, GameEvent::MOVE_LEFT);
+    this->mapKey(KEY_H, GameEvent::MOVE_LEFT);
 
-    mapKey(KEY_RIGHT, GameEvent::MOVE_RIGHT);
-    mapKey(KEY_L, GameEvent::MOVE_RIGHT);
+    this->mapKey(KEY_RIGHT, GameEvent::MOVE_RIGHT);
+    this->mapKey(KEY_L, GameEvent::MOVE_RIGHT);
 
-    mapKey(KEY_DOWN, GameEvent::MOVE_DOWN);
-    mapKey(KEY_J, GameEvent::MOVE_DOWN);
+    this->mapKey(KEY_DOWN, GameEvent::MOVE_DOWN);
+    this->mapKey(KEY_J, GameEvent::MOVE_DOWN);
 
-    mapKey(KEY_UP, GameEvent::HARD_DROP);
-    mapKey(KEY_K, GameEvent::HARD_DROP);
+    this->mapKey(KEY_UP, GameEvent::HARD_DROP);
+    this->mapKey(KEY_K, GameEvent::HARD_DROP);
 
-    mapKey(KEY_Z, GameEvent::ROTATE_CCW);
-    mapKey(KEY_X, GameEvent::ROTATE_CW);
+    this->mapKey(KEY_Z, GameEvent::ROTATE_CCW);
+    this->mapKey(KEY_X, GameEvent::ROTATE_CW);
 
-    mapKey(KEY_SPACE, GameEvent::HOLD);
+    this->mapKey(KEY_SPACE, GameEvent::HOLD);
 
-    mapKey(KEY_R, GameEvent::RESTART);
+    this->mapKey(KEY_R, GameEvent::RESTART);
 }
 
 void Renderer::mapKey(int raylibKey, GameEvent event) {
@@ -61,13 +62,13 @@ void Renderer::run() {
     while (!WindowShouldClose()) {
         float frameTime = GetFrameTime();
 
-        processInput();
+        this->processInput();
 
         // Fixed timestep update (60 ticks per second)
-        tickAccumulator += frameTime;
-        while (tickAccumulator >= TARGET_TICK_RATE) {
+        this->tickAccumulator += frameTime;
+        while (this->tickAccumulator >= TARGET_TICK_RATE) {
             this->gameEngine.update(TARGET_TICK_RATE);
-            tickAccumulator -= TARGET_TICK_RATE;
+            this->tickAccumulator -= TARGET_TICK_RATE;
         }
 
         // Render
@@ -76,15 +77,15 @@ void Renderer::run() {
 
         GameState state = this->gameEngine.getState();
 
-        drawBoard(state);
-        drawGhostPiece(state);
-        drawTetromino(state);
-        drawHoldBox(state);
-        drawNextBox(state);
-        drawUI(state);
+        this->drawBoard(state);
+        this->drawGhostPiece(state);
+        this->drawTetromino(state);
+        this->drawHoldBox(state);
+        this->drawNextBox(state);
+        this->drawUI(state);
 
         if (state.gameOver) {
-            drawGameOver();
+            this->drawGameOver();
         }
 
         EndDrawing();
@@ -92,9 +93,23 @@ void Renderer::run() {
 }
 
 void Renderer::processInput() {
-    for (const std::pair<const int, GameEvent>& mapping : this->keyMapping) {
-        if (IsKeyPressed(mapping.first) || IsKeyPressedRepeat(mapping.first)) {
-            this->gameEngine.handleEvent(mapping.second);
+    float keyDelay = 0.15f;
+    float interval = 0.05f;
+
+    for (const auto& [key, event] : this->keyMapping) {
+        if (IsKeyPressed(key)) {
+            this->gameEngine.handleEvent(event);
+            this->moveTimer = 0;
+        }
+
+        if (IsKeyDown(key)) {
+            if (event == GameEvent::MOVE_LEFT || event == GameEvent::MOVE_RIGHT || event == GameEvent::MOVE_DOWN) {
+                this->moveTimer += TARGET_TICK_RATE;
+                if (this->moveTimer > keyDelay + interval) {
+                    this->gameEngine.handleEvent(event);
+                    this->moveTimer = keyDelay;
+                }
+            }
         }
     }
 }
@@ -113,7 +128,7 @@ Color Renderer::getColorForType(TetrominoType type) const {
 }
 
 void Renderer::drawCell(int gridX, int gridY, TetrominoType type, float alpha) {
-    Color color = getColorForType(type);
+    Color color = this->getColorForType(type);
     color.a = static_cast<unsigned char>(255 * alpha);
 
     int x = this->boardOffsetX + gridX * this->cellSize;
@@ -128,7 +143,7 @@ void Renderer::drawPieceShape(const int shape[4][4], int offsetX, int offsetY,
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (shape[row][col] != 0) {
-                Color color = getColorForType(type);
+                Color color = this->getColorForType(type);
                 color.a = static_cast<unsigned char>(255 * alpha);
 
                 int x = offsetX + col * this->cellSize;
@@ -157,7 +172,7 @@ void Renderer::drawBoard(const GameState& state) {
 
             if (state.board[row][col] != 0) {
                 TetrominoType type = static_cast<TetrominoType>(state.board[row][col]);
-                drawCell(col, row, type, 1.0f);
+                this->drawCell(col, row, type, 1.0f);
             }
         }
     }
@@ -167,7 +182,7 @@ void Renderer::drawTetromino(const GameState& state) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (state.currentPieceShape[row][col] != 0) {
-                drawCell(
+                this->drawCell(
                     state.currentPieceX + col,
                     state.currentPieceY + row,
                     state.currentPieceType,
@@ -182,7 +197,7 @@ void Renderer::drawGhostPiece(const GameState& state) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (state.currentPieceShape[row][col] != 0) {
-                drawCell(
+                this->drawCell(
                     state.currentPieceX + col,
                     state.ghostPieceY + row,
                     state.currentPieceType,
@@ -193,39 +208,66 @@ void Renderer::drawGhostPiece(const GameState& state) {
     }
 }
 
+void Renderer::drawCenteredPiece(TetrominoType type, int boxX, int boxY, int boxSize, float alpha) {
+    if (type == TetrominoType::NONE) return;
+
+    int shape[4][4];
+    Tetromino::getBaseShape(type, Orientation::NORTH, shape);
+
+    // Find real tetromino dimensions
+    int minCol = 4, maxCol = 0, minRow = 4, maxRow = 0;
+    bool hasContent = false;
+    for (int r = 0; r < 4; r++) {
+        for (int c = 0; c < 4; c++) {
+            if (shape[r][c] != 0) {
+                if (c < minCol) minCol = c;
+                if (c > maxCol) maxCol = c;
+                if (r < minRow) minRow = r;
+                if (r > maxRow) maxRow = r;
+                hasContent = true;
+            }
+        }
+    }
+
+    if (!hasContent) return;
+
+    int pieceWidth = (maxCol - minCol + 1) * this->cellSize;
+    int pieceHeight = (maxRow - minRow + 1) * this->cellSize;
+
+    int centeredX = boxX + (boxSize - pieceWidth) / 2 - (minCol * this->cellSize);
+    int centeredY = boxY + (boxSize - pieceHeight) / 2 - (minRow * this->cellSize);
+
+    this->drawPieceShape(shape, centeredX, centeredY, type, alpha);
+}
+
 void Renderer::drawHoldBox(const GameState& state) {
     DrawText("HOLD", this->holdBoxX, this->holdBoxY - 25, 20, WHITE);
 
-    // Draw hold box background
-    DrawRectangle(this->holdBoxX, this->holdBoxY, 4 * this->cellSize, 4 * this->cellSize, {20, 20, 20, 255});
-    DrawRectangleLines(this->holdBoxX, this->holdBoxY, 4 * this->cellSize, 4 * this->cellSize, WHITE);
+    int boxSize = 4 * this->cellSize;
+    DrawRectangle(this->holdBoxX, this->holdBoxY, boxSize, boxSize, {20, 20, 20, 255});
+    DrawRectangleLines(this->holdBoxX, this->holdBoxY, boxSize, boxSize, WHITE);
 
     if (state.hasHeldPiece) {
-        int heldShape[4][4];
-        Tetromino::getBaseShape(state.heldPieceType, Orientation::NORTH, heldShape);
-
         float alpha = state.canHold ? 1.0f : 0.4f;
-        drawPieceShape(heldShape, this->holdBoxX, this->holdBoxY, state.heldPieceType, alpha);
+        this->drawCenteredPiece(state.heldPieceType, this->holdBoxX, this->holdBoxY, boxSize, alpha);
     }
 }
 
 void Renderer::drawNextBox(const GameState& state) {
-    DrawText("NEXT", this->nextBoxX, this->nextBoxY - 25, 20, WHITE);
+DrawText("NEXT", this->nextBoxX, this->nextBoxY - 25, 20, WHITE);
 
+    int boxSize = 4 * this->cellSize;
     int yOffset = this->nextBoxY;
 
     for (int i = 0; i < 2; i++) {
-        // Draw next box background
-        DrawRectangle(this->nextBoxX, yOffset, 4 * this->cellSize, 4 * this->cellSize, {20, 20, 20, 255});
-        DrawRectangleLines(this->nextBoxX, yOffset, 4 * this->cellSize, 4 * this->cellSize, WHITE);
+        DrawRectangle(this->nextBoxX, yOffset, boxSize, boxSize, {20, 20, 20, 255});
+        DrawRectangleLines(this->nextBoxX, yOffset, boxSize, boxSize, WHITE);
 
         if (state.nextPieces[i] != TetrominoType::NONE) {
-            int nextShape[4][4];
-            Tetromino::getBaseShape(state.nextPieces[i], Orientation::NORTH, nextShape);
-            drawPieceShape(nextShape, this->nextBoxX, yOffset, state.nextPieces[i], 1.0f);
+            this->drawCenteredPiece(state.nextPieces[i], this->nextBoxX, yOffset, boxSize, 1.0f);
         }
 
-        yOffset += 4 * this->cellSize + 20;
+        yOffset += boxSize + 20;
     }
 }
 

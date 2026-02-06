@@ -7,7 +7,7 @@ Game::Game()
     : canHold(true), score(0), level(1), linesCleared(0),
       gameOver(false), dropTimer(0.0f), dropInterval(1.0f) {
     std::memset(this->board, 0, sizeof(this->board));
-    spawnNextPiece();
+    this->spawnNextPiece();
 }
 
 void Game::reset() {
@@ -22,7 +22,7 @@ void Game::reset() {
     this->heldPiece.reset();
 
     this->generator = PieceGenerator();
-    spawnNextPiece();
+    this->spawnNextPiece();
 }
 
 void Game::update(float deltaTime) {
@@ -35,9 +35,9 @@ void Game::update(float deltaTime) {
     if (this->dropTimer >= this->dropInterval) {
         this->dropTimer = 0.0f;
 
-        if (!tryMoveDown()) {
-            lockPiece();
-            int cleared = clearLines();
+        if (!this->tryMoveDown()) {
+            this->lockPiece();
+            int cleared = this->clearLines();
 
             if (cleared > 0) {
                 // Update score based on lines cleared
@@ -47,13 +47,13 @@ void Game::update(float deltaTime) {
 
                 // Level up every 10 lines
                 this->level = (this->linesCleared / 10) + 1;
-                updateDropInterval();
+                this->updateDropInterval();
             }
 
-            spawnNextPiece();
+            this->spawnNextPiece();
             this->canHold = true;
 
-            if (!isValidPosition(this->currentPiece)) {
+            if (!this->isValidPosition(this->currentPiece)) {
                 this->gameOver = true;
             }
         }
@@ -67,30 +67,30 @@ void Game::handleEvent(GameEvent event) {
 
     switch (event) {
         case GameEvent::MOVE_LEFT:
-            tryMoveLeft();
+            this->tryMoveLeft();
             break;
         case GameEvent::MOVE_RIGHT:
-            tryMoveRight();
+            this->tryMoveRight();
             break;
         case GameEvent::MOVE_DOWN:
-            if (tryMoveDown()) {
+            if (this->tryMoveDown()) {
                 this->score += 1; // Soft drop bonus
             }
             break;
         case GameEvent::ROTATE_CW:
-            tryRotate(true);
+            this->tryRotate(true);
             break;
         case GameEvent::ROTATE_CCW:
-            tryRotate(false);
+            this->tryRotate(false);
             break;
         case GameEvent::HARD_DROP:
-            performHardDrop();
+            this->performHardDrop();
             break;
         case GameEvent::HOLD:
-            performHold();
+            this->performHold();
             break;
         case GameEvent::RESTART:
-            reset();
+            this->reset();
             break;
     }
 }
@@ -117,7 +117,7 @@ GameState Game::getState() const {
     state.nextPieces = this->generator.getPreview();
 
     // Ghost piece
-    state.ghostPieceY = calculateGhostY();
+    state.ghostPieceY = this->calculateGhostY();
 
     // Game stats
     state.score = this->score;
@@ -129,7 +129,7 @@ GameState Game::getState() const {
 }
 
 bool Game::isValidPosition(const Tetromino& piece) const {
-    return isValidPosition(piece, 0, 0);
+    return this->isValidPosition(piece, 0, 0);
 }
 
 bool Game::isValidPosition(const Tetromino& piece, int offsetX, int offsetY) const {
@@ -228,7 +228,7 @@ void Game::spawnNextPiece() {
 int Game::calculateGhostY() const {
     Tetromino ghost = this->currentPiece;
 
-    while (isValidPosition(ghost, 0, 1)) {
+    while (this->isValidPosition(ghost, 0, 1)) {
         ghost.moveDown();
     }
 
@@ -257,7 +257,7 @@ bool Game::tryMoveRight() {
 }
 
 bool Game::tryMoveDown() {
-    if (isValidPosition(this->currentPiece, 0, 1)) {
+    if (this->isValidPosition(this->currentPiece, 0, 1)) {
         this->currentPiece.moveDown();
         return true;
     }
@@ -284,7 +284,7 @@ bool Game::tryRotate(bool clockwise) {
             this->currentPiece.getY() + kick.second
         );
 
-        if (isValidPosition(testPiece)) {
+        if (this->isValidPosition(testPiece)) {
             this->currentPiece = testPiece;
             return true;
         }
@@ -294,27 +294,27 @@ bool Game::tryRotate(bool clockwise) {
 }
 
 void Game::performHardDrop() {
-    int ghostY = calculateGhostY();
+    int ghostY = this->calculateGhostY();
     int distance = ghostY - this->currentPiece.getY();
 
     this->currentPiece.setPosition(this->currentPiece.getX(), ghostY);
     this->score += distance * 2; // Hard drop bonus
 
-    lockPiece();
-    int cleared = clearLines();
+    this->lockPiece();
+    int cleared = this->clearLines();
 
     if (cleared > 0) {
         int points[] = {0, 40, 100, 300, 1200};
         this->score += points[cleared] * this->level;
         this->linesCleared += cleared;
         this->level = (this->linesCleared / 10) + 1;
-        updateDropInterval();
+        this->updateDropInterval();
     }
 
-    spawnNextPiece();
+    this->spawnNextPiece();
     this->canHold = true;
 
-    if (!isValidPosition(this->currentPiece)) {
+    if (!this->isValidPosition(this->currentPiece)) {
         this->gameOver = true;
     }
 
@@ -336,6 +336,6 @@ void Game::performHold() {
     } else {
         // Store current piece and spawn new one
         this->heldPiece = Tetromino(this->currentPiece.getType(), 0, 0);
-        spawnNextPiece();
+        this->spawnNextPiece();
     }
 }
