@@ -88,7 +88,7 @@ static const int SHAPES[8][4][4][4] = {
 
 Tetromino::Tetromino()
     : type(TetrominoType::NONE), orientation(Orientation::NORTH), x(0), y(0) {
-    std::memset(shape, 0, sizeof(shape));
+    std::memset(this->shape, 0, sizeof(this->shape));
 }
 
 Tetromino::Tetromino(TetrominoType type, int startX, int startY)
@@ -97,15 +97,15 @@ Tetromino::Tetromino(TetrominoType type, int startX, int startY)
 }
 
 void Tetromino::updateShape() {
-    getBaseShape(type, orientation, shape);
+    getBaseShape(this->type, this->orientation, this->shape);
 }
 
 void Tetromino::getShape(int outShape[4][4]) const {
-    std::memcpy(outShape, shape, sizeof(int) * 16);
+    std::memcpy(outShape, this->shape, sizeof(int) * 16);
 }
 
 void Tetromino::setOrientation(Orientation newOrientation) {
-    orientation = newOrientation;
+    this->orientation = newOrientation;
     updateShape();
 }
 

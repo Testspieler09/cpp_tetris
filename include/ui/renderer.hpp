@@ -1,6 +1,5 @@
 #pragma once
 #include "engine/igame_engine.hpp"
-#include "engine/tetromino.hpp"
 #include <raylib.h>
 #include <map>
 
@@ -43,7 +42,7 @@ private:
     void setupDefaultKeyMapping();
 
 public:
-    Renderer(IGameEngine& game, int width = 800, int height = 600, int cellSize = 30);
+    Renderer(IGameEngine& game, int width = 800, int height = 670, int cellSize = 30);
     ~Renderer();
 
     // Main game loop
