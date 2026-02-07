@@ -7,9 +7,6 @@ private:
     TetrominoType type;
     Orientation orientation;
     int x, y;
-    int shape[4][4];
-
-    void updateShape();
 
 public:
     Tetromino();

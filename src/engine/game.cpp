@@ -111,7 +111,7 @@ GameState Game::getState() const {
     // Hold piece info
     state.hasHeldPiece = this->heldPiece.has_value();
     state.canHold = this->canHold;
-    state.heldPieceType = this->heldPiece.has_value() ? this->heldPiece->getType() : TetrominoType::NONE;
+    state.heldPieceType = this->heldPiece ? this->heldPiece->getType() : TetrominoType::NONE;
 
     // Next pieces
     state.nextPieces = this->generator.getPreview();
@@ -328,7 +328,7 @@ void Game::performHold() {
 
     this->canHold = false;
 
-    if (this->heldPiece.has_value()) {
+    if (this->heldPiece) {
         // Swap current piece with held piece
         Tetromino temp = this->currentPiece;
         this->currentPiece = Tetromino(this->heldPiece->getType(), SPAWN_X, SPAWN_Y);
