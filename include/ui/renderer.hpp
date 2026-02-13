@@ -1,5 +1,5 @@
 #pragma once
-#include "engine/igame_engine.hpp"
+#include "engine/core/igame_engine.hpp"
 #include <raylib.h>
 #include <map>
 
@@ -29,7 +29,7 @@ private:
     // Helper rendering methods
     Color getColorForType(TetrominoType type) const;
     void drawCell(int gridX, int gridY, TetrominoType type, float alpha = 1.0f);
-    void drawPieceShape(const int shape[4][4], int offsetX, int offsetY, TetrominoType type, float alpha = 1.0f);
+    void drawPieceShape(const char shape[4][4], int offsetX, int offsetY, TetrominoType type, float alpha = 1.0f);
     void drawTetromino(const GameState& state);
     void drawGhostPiece(const GameState& state);
     void drawBoard(const GameState& state);

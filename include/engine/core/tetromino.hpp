@@ -1,6 +1,6 @@
 #pragma once
 
-#include "igame_engine.hpp"
+#include "engine/core/igame_engine.hpp"
 
 class Tetromino {
 private:
@@ -17,7 +17,7 @@ public:
     Orientation getOrientation() const { return orientation; }
     int getX() const { return x; }
     int getY() const { return y; }
-    void getShape(int outShape[4][4]) const;
+    void getShape(char outShape[4][4]) const;
 
     // Movement
     void moveLeft() { x--; }
@@ -29,5 +29,5 @@ public:
     void setOrientation(Orientation newOrientation);
 
     // Get base shape for a tetromino type at specific orientation
-    static void getBaseShape(TetrominoType type, Orientation orientation, int outShape[4][4]);
+    static void getBaseShape(TetrominoType type, Orientation orientation, char outShape[4][4]);
 };

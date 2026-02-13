@@ -1,32 +1,47 @@
-#include "engine/game.hpp"
-#include "engine/piece_rotation.hpp"
+#include <cstdlib>
 #include <cstring>
 #include <algorithm>
 
-Game::Game()
-    : canHold(true), score(0), level(1), linesCleared(0),
-      gameOver(false), dropTimer(0.0f), dropInterval(1.0f) {
-    std::memset(this->board, 0, sizeof(this->board));
+#include "engine/modes/igame_mode.hpp"
+#include "engine/core/game.hpp"
+#include "engine/core/piece_rotation.hpp"
+
+Game::Game(std::unique_ptr<IGameMode> mode)
+    : mode(std::move(mode)) {
+
+    GameConfig cfg = this->mode->getInitialConfig();
+
+    this->board_width = cfg.boardWidth;
+    this->board_height = cfg.boardHeight;
+    this->canHold = cfg.canHold;
+    this->dropInterval = cfg.dropInterval;
+    this->score = cfg.startingScore;
+    this->level = cfg.startingLevel;
+    this->linesCleared = cfg.startingLinesCleared;
+
+    // Resize board
+    this->board.resize(board_height);
+    for (int y = 0; y < board_height; ++y) {
+        this->board[y].resize(board_width);
+
+        for (int x = 0; x < board_width; ++x) {
+            this->board[y][x] = cfg.initialBoard[y][x];
+        }
+    }
+
     this->spawnNextPiece();
 }
 
 void Game::reset() {
-    std::memset(this->board, 0, sizeof(this->board));
-    this->score = 0;
-    this->level = 1;
-    this->linesCleared = 0;
-    this->gameOver = false;
-    this->dropTimer = 0.0f;
-    this->dropInterval = 1.0f;
-    this->canHold = true;
-    this->heldPiece.reset();
-
-    this->generator = PieceGenerator();
+    for (std::vector<char>& inner_vec : this->board) {
+        std::fill(inner_vec.begin(), inner_vec.end(), 0);
+    }
+    this->mode->getInitialConfig();
     this->spawnNextPiece();
 }
 
 void Game::update(float deltaTime) {
-    if (this->gameOver) {
+    if (this->won || this->gameOver) {
         return;
     }
 
@@ -53,8 +68,12 @@ void Game::update(float deltaTime) {
             this->spawnNextPiece();
             this->canHold = true;
 
-            if (!this->isValidPosition(this->currentPiece)) {
+            if (this->mode->checkLose(*this)) {
                 this->gameOver = true;
+            }
+
+            if (this->mode->checkWin(*this)) {
+                this->won = true;
             }
         }
     }
@@ -99,7 +118,7 @@ GameState Game::getState() const {
     GameState state;
 
     // Copy board
-    std::memcpy(state.board, this->board, sizeof(this->board));
+    state.board = this->board;
 
     // Current piece info
     this->currentPiece.getShape(state.currentPieceShape);
@@ -114,7 +133,7 @@ GameState Game::getState() const {
     state.heldPieceType = this->heldPiece ? this->heldPiece->getType() : TetrominoType::NONE;
 
     // Next pieces
-    state.nextPieces = this->generator.getPreview();
+    state.nextPieces = this->mode->getPiecePreview();
 
     // Ghost piece
     state.ghostPieceY = this->calculateGhostY();
@@ -133,7 +152,7 @@ bool Game::isValidPosition(const Tetromino& piece) const {
 }
 
 bool Game::isValidPosition(const Tetromino& piece, int offsetX, int offsetY) const {
-    int shape[4][4];
+    char shape[4][4];
     piece.getShape(shape);
 
     int pieceX = piece.getX() + offsetX;
@@ -145,15 +164,17 @@ bool Game::isValidPosition(const Tetromino& piece, int offsetX, int offsetY) con
                 int boardX = pieceX + col;
                 int boardY = pieceY + row;
 
-                // Check bounds
-                if (boardX < 0 || boardX >= BOARD_WIDTH ||
-                    boardY < 0 || boardY >= BOARD_HEIGHT) {
+                // Check horizontal bounds and bottom bound
+                if (boardX < 0 || boardX >= board_width ||
+                    boardY >= board_height) {
                     return false;
                 }
 
-                // Check collision with locked pieces
-                if (this->board[boardY][boardX] != 0) {
-                    return false;
+                // Allow negative Y (piece above board)
+                if (boardY >= 0) {
+                    if (board[boardY][boardX] != 0) {
+                        return false;
+                    }
                 }
             }
         }
@@ -163,7 +184,7 @@ bool Game::isValidPosition(const Tetromino& piece, int offsetX, int offsetY) con
 }
 
 void Game::lockPiece() {
-    int shape[4][4];
+    char shape[4][4];
     this->currentPiece.getShape(shape);
 
     int pieceX = this->currentPiece.getX();
@@ -176,8 +197,8 @@ void Game::lockPiece() {
                 int boardX = pieceX + col;
                 int boardY = pieceY + row;
 
-                if (boardX >= 0 && boardX < BOARD_WIDTH &&
-                    boardY >= 0 && boardY < BOARD_HEIGHT) {
+                if (boardX >= 0 && boardX < this->board_width &&
+                    boardY >= 0 && boardY < this->board_height) {
                     this->board[boardY][boardX] = pieceType;
                 }
             }
@@ -188,10 +209,10 @@ void Game::lockPiece() {
 int Game::clearLines() {
     int cleared = 0;
 
-    for (int row = BOARD_HEIGHT - 1; row >= 0; row--) {
+    for (int row = this->board_height - 1; row >= 0; row--) {
         bool fullLine = true;
 
-        for (int col = 0; col < BOARD_WIDTH; col++) {
+        for (int col = 0; col < this->board_width; col++) {
             if (this->board[row][col] == 0) {
                 fullLine = false;
                 break;
@@ -203,13 +224,13 @@ int Game::clearLines() {
 
             // Move all rows above down
             for (int r = row; r > 0; r--) {
-                for (int col = 0; col < BOARD_WIDTH; col++) {
+                for (int col = 0; col < this->board_width; col++) {
                     this->board[r][col] = this->board[r - 1][col];
                 }
             }
 
             // Clear top row
-            for (int col = 0; col < BOARD_WIDTH; col++) {
+            for (int col = 0; col < this->board_width; col++) {
                 this->board[0][col] = 0;
             }
 
@@ -222,7 +243,7 @@ int Game::clearLines() {
 }
 
 void Game::spawnNextPiece() {
-    this->currentPiece = this->generator.getNext();
+    this->currentPiece = this->mode->getNextPiece(this->SPAWN_X, this->SPAWN_Y);
 }
 
 int Game::calculateGhostY() const {
@@ -314,8 +335,12 @@ void Game::performHardDrop() {
     this->spawnNextPiece();
     this->canHold = true;
 
-    if (!this->isValidPosition(this->currentPiece)) {
+    if (this->mode->checkLose(*this)) {
         this->gameOver = true;
+    }
+
+    if (this->mode->checkWin(*this)) {
+        this->won = true;
     }
 
     this->dropTimer = 0.0f;
@@ -331,7 +356,7 @@ void Game::performHold() {
     if (this->heldPiece) {
         // Swap current piece with held piece
         Tetromino temp = this->currentPiece;
-        this->currentPiece = Tetromino(this->heldPiece->getType(), SPAWN_X, SPAWN_Y);
+        this->currentPiece = Tetromino(this->heldPiece->getType(), this->SPAWN_X, this->SPAWN_Y);
         this->heldPiece = Tetromino(temp.getType(), 0, 0);
     } else {
         // Store current piece and spawn new one

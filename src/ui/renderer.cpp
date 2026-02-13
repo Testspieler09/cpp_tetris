@@ -1,6 +1,6 @@
 #include "ui/renderer.hpp"
-#include "engine/igame_engine.hpp"
-#include "engine/tetromino.hpp"
+#include "engine/core/igame_engine.hpp"
+#include "engine/core/tetromino.hpp"
 #include "raylib.h"
 #include <cstring>
 
@@ -138,7 +138,7 @@ void Renderer::drawCell(int gridX, int gridY, TetrominoType type, float alpha) {
     DrawRectangleLines(x, y, this->cellSize, this->cellSize, WHITE);
 }
 
-void Renderer::drawPieceShape(const int shape[4][4], int offsetX, int offsetY,
+void Renderer::drawPieceShape(const char shape[4][4], int offsetX, int offsetY,
                                TetrominoType type, float alpha) {
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
@@ -211,7 +211,7 @@ void Renderer::drawGhostPiece(const GameState& state) {
 void Renderer::drawCenteredPiece(TetrominoType type, int boxX, int boxY, int boxSize, float alpha) {
     if (type == TetrominoType::NONE) return;
 
-    int shape[4][4];
+    char shape[4][4];
     Tetromino::getBaseShape(type, Orientation::NORTH, shape);
 
     // Find real tetromino dimensions

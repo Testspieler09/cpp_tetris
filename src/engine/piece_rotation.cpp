@@ -1,4 +1,4 @@
-#include "engine/piece_rotation.hpp"
+#include "engine/core/piece_rotation.hpp"
 
 std::vector<std::pair<int, int>> PieceRotation::getWallKicks(
     TetrominoType type,

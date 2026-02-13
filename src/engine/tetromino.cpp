@@ -1,9 +1,9 @@
-#include "engine/tetromino.hpp"
+#include "engine/core/tetromino.hpp"
 #include <cstring>
 
 // Base shapes for each tetromino type at each orientation
 // 0 = empty, 1 = filled
-static const int SHAPES[8][4][4][4] = {
+static const char SHAPES[8][4][4][4] = {
     // NONE
     {
         {{0,0,0,0}, {0,0,0,0}, {0,0,0,0}, {0,0,0,0}},
@@ -90,7 +90,7 @@ Tetromino::Tetromino() : type(TetrominoType::NONE), orientation(Orientation::NOR
 
 Tetromino::Tetromino(TetrominoType type, int startX, int startY) : type(type), orientation(Orientation::NORTH), x(startX), y(startY) {}
 
-void Tetromino::getShape(int outShape[4][4]) const {
+void Tetromino::getShape(char outShape[4][4]) const {
     this->getBaseShape(this->type, this->orientation, outShape);
 }
 
@@ -98,8 +98,8 @@ void Tetromino::setOrientation(Orientation newOrientation) {
     this->orientation = newOrientation;
 }
 
-void Tetromino::getBaseShape(TetrominoType type, Orientation orientation, int outShape[4][4]) {
+void Tetromino::getBaseShape(TetrominoType type, Orientation orientation, char outShape[4][4]) {
     int typeIndex = static_cast<int>(type);
     int orientIndex = static_cast<int>(orientation);
-    std::memcpy(outShape, SHAPES[typeIndex][orientIndex], sizeof(int) * 16);
+    std::memcpy(outShape, SHAPES[typeIndex][orientIndex], sizeof(char) * 16);
 }

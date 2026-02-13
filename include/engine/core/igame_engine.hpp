@@ -1,6 +1,7 @@
 #pragma once
 
 #include <array>
+#include <vector>
 
 enum class TetrominoType {
     NONE = 0,
@@ -33,10 +34,10 @@ enum class GameEvent {
 
 struct GameState {
     // Board state (20 rows x 10 columns)
-    int board[20][10];
+    std::vector<std::vector<char>> board;
 
     // Current piece
-    int currentPieceShape[4][4];
+    char currentPieceShape[4][4];
     TetrominoType currentPieceType;
     Orientation currentPieceOrientation;
     int currentPieceX;
