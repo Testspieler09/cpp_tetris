@@ -11,7 +11,8 @@ enum class TetrominoType {
     S = 4,
     Z = 5,
     J = 6,
-    L = 7
+    L = 7,
+    BLOCK = 8
 };
 
 enum class Orientation {
@@ -33,7 +34,7 @@ enum class GameEvent {
 };
 
 struct GameState {
-    // Board state (20 rows x 10 columns)
+    // Board state
     std::vector<std::vector<char>> board;
 
     // Current piece
@@ -59,6 +60,7 @@ struct GameState {
     int level;
     int linesCleared;
     bool gameOver;
+    bool won;
 };
 
 class IGameEngine {

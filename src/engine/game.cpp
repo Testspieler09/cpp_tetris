@@ -2,18 +2,18 @@
 #include <cstring>
 #include <algorithm>
 
+#include "engine/core/igame_engine.hpp"
 #include "engine/modes/igame_mode.hpp"
 #include "engine/core/game.hpp"
 #include "engine/core/piece_rotation.hpp"
 
 Game::Game(std::unique_ptr<IGameMode> mode)
-    : mode(std::move(mode)) {
-
+    : mode(std::move(mode)), canHold(true), gameOver(false), won(false) {
     GameConfig cfg = this->mode->getInitialConfig();
 
     this->board_width = cfg.boardWidth;
     this->board_height = cfg.boardHeight;
-    this->canHold = cfg.canHold;
+    this->canHoldAnything = cfg.canHoldAnything;
     this->dropInterval = cfg.dropInterval;
     this->score = cfg.startingScore;
     this->level = cfg.startingLevel;
@@ -36,7 +36,31 @@ void Game::reset() {
     for (std::vector<char>& inner_vec : this->board) {
         std::fill(inner_vec.begin(), inner_vec.end(), 0);
     }
-    this->mode->getInitialConfig();
+
+    this->canHold = true;
+    this->gameOver = false;
+    this->won = false;
+
+    GameConfig cfg = this->mode->getInitialConfig();
+
+    this->board_width = cfg.boardWidth;
+    this->board_height = cfg.boardHeight;
+    this->canHoldAnything = cfg.canHoldAnything;
+    this->dropInterval = cfg.dropInterval;
+    this->score = cfg.startingScore;
+    this->level = cfg.startingLevel;
+    this->linesCleared = cfg.startingLinesCleared;
+
+    // Resize board
+    this->board.resize(board_height);
+    for (int y = 0; y < board_height; ++y) {
+        this->board[y].resize(board_width);
+
+        for (int x = 0; x < board_width; ++x) {
+            this->board[y][x] = cfg.initialBoard[y][x];
+        }
+    }
+
     this->spawnNextPiece();
 }
 
@@ -66,21 +90,25 @@ void Game::update(float deltaTime) {
             }
 
             this->spawnNextPiece();
-            this->canHold = true;
+            if (this->canHoldAnything) {
+                this->canHold = true;
+            }
+
+            if (!this->mode->advancePuzzle(*this)
+                && this->mode->checkWin(*this)) {
+                this->won = true;
+                return;
+            }
 
             if (this->mode->checkLose(*this)) {
                 this->gameOver = true;
-            }
-
-            if (this->mode->checkWin(*this)) {
-                this->won = true;
             }
         }
     }
 }
 
 void Game::handleEvent(GameEvent event) {
-    if (this->gameOver && event != GameEvent::RESTART) {
+    if ((this->gameOver || this->won )&& event != GameEvent::RESTART) {
         return;
     }
 
@@ -143,15 +171,23 @@ GameState Game::getState() const {
     state.level = this->level;
     state.linesCleared = this->linesCleared;
     state.gameOver = this->gameOver;
+    state.won = this->won;
 
     return state;
 }
 
 bool Game::isValidPosition(const Tetromino& piece) const {
+    if (piece.getType() == TetrominoType::NONE) {
+        return false;  // NONE pieces are never valid
+    }
     return this->isValidPosition(piece, 0, 0);
 }
 
 bool Game::isValidPosition(const Tetromino& piece, int offsetX, int offsetY) const {
+    if (piece.getType() == TetrominoType::NONE) {
+        return false;  // NONE pieces are never valid
+    }
+
     char shape[4][4];
     piece.getShape(shape);
 
@@ -333,21 +369,25 @@ void Game::performHardDrop() {
     }
 
     this->spawnNextPiece();
-    this->canHold = true;
+    if (this->canHoldAnything) {
+        this->canHold = true;
+    }
+
+    if (!this->mode->advancePuzzle(*this)
+        && this->mode->checkWin(*this)) {
+        this->won = true;
+        return;
+    }
 
     if (this->mode->checkLose(*this)) {
         this->gameOver = true;
-    }
-
-    if (this->mode->checkWin(*this)) {
-        this->won = true;
     }
 
     this->dropTimer = 0.0f;
 }
 
 void Game::performHold() {
-    if (!this->canHold) {
+    if (!this->canHold || !this->canHoldAnything) {
         return;
     }
 

@@ -6,11 +6,14 @@
 
 class PuzzleMode : public IGameMode {
 private:
-    std::unique_ptr<IPieceGenerator> generator;
+    std::unique_ptr<FixedSequenceGenerator> generator;
+
+    int score; // Needs to be tracked because here of resets
+    size_t currentPuzzleIndex;
 
 public:
     PuzzleMode()
-        : generator(std::make_unique<FixedSequenceGenerator>())
+        : generator(std::make_unique<FixedSequenceGenerator>()), currentPuzzleIndex(0)
     {}
 
     GameConfig getInitialConfig() const override;
@@ -19,4 +22,6 @@ public:
 
     bool checkWin(const Game& game) const override;
     bool checkLose(const Game& game) const override;
+
+    bool advancePuzzle(Game& game) override;
 };

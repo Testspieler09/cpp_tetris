@@ -38,6 +38,7 @@ private:
     void drawNextBox(const GameState& state);
     void drawUI(const GameState& state);
     void drawGameOver();
+    void drawWon();
 
     // Input handling
     void processInput();

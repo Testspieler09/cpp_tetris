@@ -2,7 +2,9 @@
 #include "engine/core/igame_engine.hpp"
 #include "engine/core/tetromino.hpp"
 #include "raylib.h"
+#include <cstdlib>
 #include <cstring>
+#include <iostream>
 
 Renderer::Renderer(IGameEngine& game, int width, int height, int cellSize)
     : gameEngine(game), screenWidth(width), screenHeight(height),
@@ -84,8 +86,15 @@ void Renderer::run() {
         this->drawNextBox(state);
         this->drawUI(state);
 
+        if (state.gameOver && state.won) {
+            std::cerr << "This section should be unreachable" << std::endl;
+            exit(1);
+        }
         if (state.gameOver) {
             this->drawGameOver();
+        }
+        if (state.won) {
+            this->drawWon();
         }
 
         EndDrawing();
@@ -103,7 +112,9 @@ void Renderer::processInput() {
         }
 
         if (IsKeyDown(key)) {
-            if (event == GameEvent::MOVE_LEFT || event == GameEvent::MOVE_RIGHT || event == GameEvent::MOVE_DOWN) {
+            if (event == GameEvent::MOVE_LEFT
+                || event == GameEvent::MOVE_RIGHT
+                || event == GameEvent::MOVE_DOWN) {
                 this->moveTimer += TARGET_TICK_RATE;
                 if (this->moveTimer > keyDelay + interval) {
                     this->gameEngine.handleEvent(event);
@@ -116,14 +127,15 @@ void Renderer::processInput() {
 
 Color Renderer::getColorForType(TetrominoType type) const {
     switch (type) {
-        case TetrominoType::I: return {0, 255, 255, 255};    // Cyan
-        case TetrominoType::O: return {255, 255, 0, 255};    // Yellow
-        case TetrominoType::T: return {128, 0, 128, 255};    // Purple
-        case TetrominoType::S: return {0, 255, 0, 255};      // Green
-        case TetrominoType::Z: return {255, 0, 0, 255};      // Red
-        case TetrominoType::J: return {0, 0, 255, 255};      // Blue
-        case TetrominoType::L: return {255, 165, 0, 255};    // Orange
-        default: return {128, 128, 128, 255};                // Gray
+        case TetrominoType::I: return {0, 255, 255, 255};     // Cyan
+        case TetrominoType::O: return {255, 255, 0, 255};     // Yellow
+        case TetrominoType::T: return {128, 0, 128, 255};     // Purple
+        case TetrominoType::S: return {0, 255, 0, 255};       // Green
+        case TetrominoType::Z: return {255, 0, 0, 255};       // Red
+        case TetrominoType::J: return {0, 0, 255, 255};       // Blue
+        case TetrominoType::L: return {255, 165, 0, 255};     // Orange
+        case TetrominoType::BLOCK: return {64, 64, 64, 255};
+        default: return {128, 128, 128, 255};                 // Gray
     }
 }
 
@@ -179,6 +191,10 @@ void Renderer::drawBoard(const GameState& state) {
 }
 
 void Renderer::drawTetromino(const GameState& state) {
+    if (state.currentPieceType == TetrominoType::NONE) {
+        return;
+    }
+
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (state.currentPieceShape[row][col] != 0) {
@@ -194,6 +210,10 @@ void Renderer::drawTetromino(const GameState& state) {
 }
 
 void Renderer::drawGhostPiece(const GameState& state) {
+    if (state.currentPieceType == TetrominoType::NONE) {
+        return;
+    }
+
     for (int row = 0; row < 4; row++) {
         for (int col = 0; col < 4; col++) {
             if (state.currentPieceShape[row][col] != 0) {
@@ -303,4 +323,20 @@ void Renderer::drawGameOver() {
     const char* restartText = "Press R to Restart";
     int restartWidth = MeasureText(restartText, 30);
     DrawText(restartText, centerX - restartWidth / 2, centerY + 20, 30, WHITE);
+}
+
+void Renderer::drawWon() {
+    int centerX = this->screenWidth / 2;
+    int centerY = this->screenHeight / 2;
+
+    // Semi-transparent overlay
+    DrawRectangle(0, 0, this->screenWidth, this->screenHeight, {0, 0, 0, 180});
+
+    const char* text = "You Won\nPuzzle Mode";
+    int textWidth = MeasureText(text, 60);
+    DrawText(text, centerX - textWidth / 2, centerY - 60, 60, GREEN);
+
+    const char* restartText = "Press R to Restart";
+    int restartWidth = MeasureText(restartText, 30);
+    DrawText(restartText, centerX - restartWidth / 2, centerY + 80, 30, WHITE);
 }

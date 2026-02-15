@@ -22,4 +22,7 @@ public:
 
     virtual bool checkWin(const Game& game) const = 0;
     virtual bool checkLose(const Game& game) const = 0;
+
+    // Will return `true` if it was successfull otherwise `false`
+    virtual bool advancePuzzle(Game& /* ignored */) { return false; }
 };

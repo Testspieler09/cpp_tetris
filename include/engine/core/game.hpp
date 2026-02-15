@@ -22,6 +22,7 @@ private:
     Tetromino currentPiece;
     std::optional<Tetromino> heldPiece;
     bool canHold;
+    bool canHoldAnything;
 
     // Game stats
     int score;
@@ -62,6 +63,22 @@ public:
     // Getter for IGameMode
     bool hasHitTopOfBoard() const {
         return !this->isValidPosition(this->currentPiece);
+    }
+    bool isBoardEmpty() const {
+        return std::all_of(
+            board.begin(),
+            board.end(),
+            [](const std::vector<char>& row) {
+                return std::all_of(
+                    row.begin(),
+                    row.end(),
+                    [](char c) { return c == 0; }
+                );
+            }
+        );
+    }
+    void setBoardTo(std::vector<std::vector<char>> new_board) {
+        this->board = new_board;
     }
 
     // Reset game
