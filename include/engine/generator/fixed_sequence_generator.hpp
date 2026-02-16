@@ -1,9 +1,10 @@
 #pragma once
 
+#include <vector>
+
 #include "engine/generator/ipiece_generator.hpp"
 #include "engine/core/igame_engine.hpp"
 #include "engine/core/tetromino.hpp"
-#include <vector>
 
 class FixedSequenceGenerator: public IPieceGenerator {
 private:

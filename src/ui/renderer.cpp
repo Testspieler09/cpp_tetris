@@ -1,10 +1,12 @@
-#include "ui/renderer.hpp"
-#include "engine/core/igame_engine.hpp"
-#include "engine/core/tetromino.hpp"
-#include "raylib.h"
 #include <cstdlib>
 #include <cstring>
 #include <iostream>
+
+#include "raylib.h"
+
+#include "ui/renderer.hpp"
+#include "engine/core/igame_engine.hpp"
+#include "engine/core/tetromino.hpp"
 
 Renderer::Renderer(IGameEngine& game, int width, int height, int cellSize)
     : gameEngine(game), screenWidth(width), screenHeight(height),
@@ -80,8 +82,10 @@ void Renderer::run() {
         GameState state = this->gameEngine.getState();
 
         this->drawBoard(state);
-        this->drawGhostPiece(state);
-        this->drawTetromino(state);
+        if (!state.won) {
+            this->drawGhostPiece(state);
+            this->drawTetromino(state);
+        }
         this->drawHoldBox(state);
         this->drawNextBox(state);
         this->drawUI(state);

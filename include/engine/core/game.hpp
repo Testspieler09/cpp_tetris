@@ -1,10 +1,11 @@
 #pragma once
 
+#include <optional>
+#include <vector>
+
 #include "engine/core/igame_engine.hpp"
 #include "engine/modes/igame_mode.hpp"
 #include "tetromino.hpp"
-#include <optional>
-#include <vector>
 
 class Game : public IGameEngine {
 private:

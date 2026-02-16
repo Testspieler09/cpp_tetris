@@ -1,8 +1,9 @@
 #pragma once
 
+#include <array>
+
 #include "engine/core/igame_engine.hpp"
 #include "engine/core/tetromino.hpp"
-#include <array>
 
 class IPieceGenerator {
 public:

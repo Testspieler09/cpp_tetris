@@ -8,15 +8,15 @@ class PuzzleMode : public IGameMode {
 private:
     std::unique_ptr<FixedSequenceGenerator> generator;
 
-    int score; // Needs to be tracked because here of resets
-    size_t currentPuzzleIndex;
+    int score = 0; // Needs to be tracked because here of resets
+    size_t currentPuzzleIndex = 0;
 
 public:
     PuzzleMode()
-        : generator(std::make_unique<FixedSequenceGenerator>()), currentPuzzleIndex(0)
-    {}
+        : generator(std::make_unique<FixedSequenceGenerator>()) {}
 
     GameConfig getInitialConfig() const override;
+
     Tetromino getNextPiece(const int SPAWN_X, const int SPAWN_Y) override;
     std::array<TetrominoType, 2> getPiecePreview() const override;
 
@@ -24,4 +24,5 @@ public:
     bool checkLose(const Game& game) const override;
 
     bool advancePuzzle(Game& game) override;
+    void reset() override;
 };

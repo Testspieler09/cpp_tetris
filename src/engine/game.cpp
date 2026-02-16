@@ -41,6 +41,8 @@ void Game::reset() {
     this->gameOver = false;
     this->won = false;
 
+    this->mode->reset();
+
     GameConfig cfg = this->mode->getInitialConfig();
 
     this->board_width = cfg.boardWidth;
@@ -89,15 +91,15 @@ void Game::update(float deltaTime) {
                 this->updateDropInterval();
             }
 
-            this->spawnNextPiece();
-            if (this->canHoldAnything) {
-                this->canHold = true;
-            }
-
             if (!this->mode->advancePuzzle(*this)
                 && this->mode->checkWin(*this)) {
                 this->won = true;
                 return;
+            }
+
+            this->spawnNextPiece();
+            if (this->canHoldAnything) {
+                this->canHold = true;
             }
 
             if (this->mode->checkLose(*this)) {
@@ -368,16 +370,17 @@ void Game::performHardDrop() {
         this->updateDropInterval();
     }
 
-    this->spawnNextPiece();
-    if (this->canHoldAnything) {
-        this->canHold = true;
-    }
-
     if (!this->mode->advancePuzzle(*this)
         && this->mode->checkWin(*this)) {
         this->won = true;
         return;
     }
+
+    this->spawnNextPiece();
+    if (this->canHoldAnything) {
+        this->canHold = true;
+    }
+
 
     if (this->mode->checkLose(*this)) {
         this->gameOver = true;

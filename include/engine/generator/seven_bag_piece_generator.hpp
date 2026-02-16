@@ -1,9 +1,10 @@
 #pragma once
 
-#include "engine/generator/ipiece_generator.hpp"
-#include "engine/core/tetromino.hpp"
 #include <array>
 #include <random>
+
+#include "engine/generator/ipiece_generator.hpp"
+#include "engine/core/tetromino.hpp"
 
 class SevenBagPieceGenerator : public IPieceGenerator {
 private:

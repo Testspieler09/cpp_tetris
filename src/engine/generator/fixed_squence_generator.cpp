@@ -1,7 +1,8 @@
-#include "engine/core/igame_engine.hpp"
-#include "engine/generator/fixed_sequence_generator.hpp"
 #include <array>
 #include <vector>
+
+#include "engine/core/igame_engine.hpp"
+#include "engine/generator/fixed_sequence_generator.hpp"
 
 void FixedSequenceGenerator::setLevelPieces(std::vector<TetrominoType> pieces) {
     this->level_pieces = std::move(pieces);

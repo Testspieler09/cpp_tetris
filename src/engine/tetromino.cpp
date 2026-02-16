@@ -1,5 +1,6 @@
-#include "engine/core/tetromino.hpp"
 #include <cstring>
+
+#include "engine/core/tetromino.hpp"
 
 // Base shapes for each tetromino type at each orientation
 // 0 = empty, 1 = filled

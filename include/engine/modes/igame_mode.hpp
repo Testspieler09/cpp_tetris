@@ -1,10 +1,11 @@
 #pragma once
 
+#include <array>
+#include <memory>
+
 #include "engine/core/igame_engine.hpp"
 #include "engine/generator/ipiece_generator.hpp"
 #include "engine/core/game_config.hpp"
-#include <array>
-#include <memory>
 
 class Game;
 class PieceGenerator;
@@ -17,6 +18,7 @@ public:
     virtual ~IGameMode() = default;
 
     virtual GameConfig getInitialConfig() const = 0;
+
     virtual Tetromino getNextPiece(const int SPAWN_X, const int SPAWN_Y) = 0;
     virtual std::array<TetrominoType, 2> getPiecePreview() const = 0;
 
@@ -25,4 +27,5 @@ public:
 
     // Will return `true` if it was successfull otherwise `false`
     virtual bool advancePuzzle(Game& /* ignored */) { return false; }
+    virtual void reset() = 0;
 };

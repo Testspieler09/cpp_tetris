@@ -1,6 +1,7 @@
-#include "engine/generator/seven_bag_piece_generator.hpp"
 #include <algorithm>
 #include <random>
+
+#include "engine/generator/seven_bag_piece_generator.hpp"
 
 void SevenBagPieceGenerator::refillBag() {
     // Fill bag with one of each piece type

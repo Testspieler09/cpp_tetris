@@ -1,7 +1,9 @@
 #pragma once
-#include "engine/core/igame_engine.hpp"
+
 #include <raylib.h>
 #include <map>
+
+#include "engine/core/igame_engine.hpp"
 
 class Renderer {
 private:
