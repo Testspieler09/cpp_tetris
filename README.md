@@ -20,11 +20,10 @@ A Tetris implementation in C++17 with the [Super Rotation System](https://harddr
 
 ## Scoring
 
-- Lines cleared: 40 (1 line) / 100 (2) / 300 (3) / 1200 (4) * level
+- Lines cleared: 40 (1 line) / 100 (2) / 300 (3) / 1200 (4) \* level
 - Soft drop: +1 point per cell
 - Hard drop: +2 points per cell
 - Level up: Every 10 lines cleared
-
 
 ## Features
 
