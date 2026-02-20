@@ -41,5 +41,5 @@
 *.dwo
 
 # Custom
-*.txt
+compile_flags.txt
 build/
