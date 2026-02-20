@@ -1,5 +1,9 @@
 # Tetris with SRS (Super Rotation System)
 
+> [!NOTE]
+>
+> Currently, the wall kicks are not working as expected, and I have yet to find the issue.
+
 A Tetris implementation in C++17 with the [Super Rotation System](https://harddrop.com/wiki/SRS), featuring hold/swap functionality and a clean separation between game logic and rendering.
 
 ## Controls
@@ -35,7 +39,7 @@ A Tetris implementation in C++17 with the [Super Rotation System](https://harddr
 - [x] Scoring system with level progression
 - [x] Soft drop and hard drop
 - [x] Game over detection
-- [ ] Puzzle mode ("wallkick introduction")
+- [x] Puzzle mode ("all clear introduction")
 
 ## Build Instructions
 

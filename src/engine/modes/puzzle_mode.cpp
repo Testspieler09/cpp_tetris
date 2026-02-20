@@ -8,10 +8,8 @@ struct PuzzleLevel {
     std::vector<TetrominoType> pieceSequence;
 };
 
-// TODO: create some nice puzzles
 static const std::vector<PuzzleLevel> PUZZLES = {
     {
-        // Puzzle 1
         {
             {0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,0,0},
@@ -31,15 +29,15 @@ static const std::vector<PuzzleLevel> PUZZLES = {
             {0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,0,0},
-            {8,8,0,0,0,8,8,8,8,8},
-            {8,8,8,0,8,8,8,8,8,8}
+            {8,8,0,0,0,0,8,8,8,8},
+            {8,8,8,0,0,0,0,8,8,8}
         },
         {
-            TetrominoType::T
+            TetrominoType::I,
+            TetrominoType::I
         }
     },
     {
-        // Puzzle 2
         {
             {0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,0,0},
@@ -57,12 +55,181 @@ static const std::vector<PuzzleLevel> PUZZLES = {
             {0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,0,0},
-            {8,8,8,0,8,8,8,8,8,8},
-            {8,8,8,0,8,8,8,8,8,8},
-            {8,8,8,0,8,8,8,8,8,8},
-            {8,8,8,0,8,8,8,8,8,8}
+            {8,0,0,0,8,8,0,0,0,8},
+            {8,8,0,0,8,8,0,0,8,8},
+            {8,8,0,0,8,8,0,0,8,8},
+            {8,8,0,8,8,8,8,0,8,8}
         },
         {
+            TetrominoType::T,
+            TetrominoType::S,
+            TetrominoType::T,
+            TetrominoType::J
+        }
+    },
+    {
+        {
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,8,8,0,0,0,0,0,0,0},
+            {0,8,8,0,0,0,0,0,0,0}
+        },
+        {
+            TetrominoType::T,
+            TetrominoType::L,
+            TetrominoType::Z,
+            TetrominoType::T,
+            TetrominoType::S,
+            TetrominoType::J,
+            TetrominoType::O,
+            TetrominoType::I,
+            TetrominoType::I
+        }
+    },
+    {
+        {
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,8,0,0,0,0,0,0},
+            {8,8,0,8,8,8,0,0,8,0},
+            {8,8,0,8,8,8,8,8,8,8}
+        },
+        {
+            TetrominoType::J,
+            TetrominoType::Z,
+            TetrominoType::T,
+            TetrominoType::O,
+            TetrominoType::L,
+            TetrominoType::I
+        }
+    },
+    {
+        {
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,8,0,0,0,0,0,0},
+            {8,8,0,8,8,8,0,0,8,0},
+            {8,8,0,8,8,8,8,8,8,8}
+        },
+        {
+            TetrominoType::O,
+            TetrominoType::Z,
+            TetrominoType::L,
+            TetrominoType::T,
+            TetrominoType::J,
+            TetrominoType::I
+        }
+    },
+    {
+        {
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {8,0,0,0,0,0,0,0,0,0},
+            {8,0,0,0,0,0,0,0,8,8},
+            {8,8,8,8,0,0,0,0,8,8},
+            {8,8,8,8,8,0,0,8,8,8},
+            {8,8,8,8,8,0,0,8,8,8}
+        },
+        {
+            TetrominoType::O,
+            TetrominoType::S,
+            TetrominoType::L,
+            TetrominoType::Z,
+            TetrominoType::T,
+            TetrominoType::J
+        }
+    },
+    {
+        {
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0},
+            {0,8,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,8,8,8,0,0}
+        },
+        {
+            TetrominoType::I,
+            TetrominoType::L,
+            TetrominoType::O,
+            TetrominoType::T,
+            TetrominoType::S,
+            TetrominoType::L,
+            TetrominoType::I,
+            TetrominoType::T,
             TetrominoType::I
         }
     }
@@ -73,9 +240,11 @@ bool PuzzleMode::advancePuzzle(Game& game) {
         return false;
     }
 
+    this->score = game.getCurrentScore();
     this->currentPuzzleIndex++;
 
     if (this->currentPuzzleIndex >= PUZZLES.size()) {
+        this->completed = true;
         return false;
     }
 
@@ -88,12 +257,14 @@ bool PuzzleMode::advancePuzzle(Game& game) {
 }
 
 void PuzzleMode::reset() {
-    if (!(this->currentPuzzleIndex >= PUZZLES.size())) {
-        return;
+    if (this->completed) {
+        this->currentPuzzleIndex = 0;
+        this->score = 0;
+        this->completed = false;
     }
-    this->currentPuzzleIndex = 0;
 
     const PuzzleLevel& puzzle = PUZZLES[this->currentPuzzleIndex];
+
     this->generator->setLevelPieces(puzzle.pieceSequence);
 }
 
@@ -107,8 +278,6 @@ GameConfig PuzzleMode::getInitialConfig() const {
     cfg.canHoldAnything = false;
     cfg.initialBoard = puzzle.initialBoard;
     cfg.startingScore = this->score;
-
-    // TODO: set the score based on this->score and provide an update fn or similar
 
     return cfg;
 };

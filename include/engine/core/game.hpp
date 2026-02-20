@@ -78,6 +78,7 @@ public:
             }
         );
     }
+    int getCurrentScore() const { return this->score; }
     void setBoardTo(std::vector<std::vector<char>> new_board) {
         this->board = new_board;
     }

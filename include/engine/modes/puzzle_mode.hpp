@@ -10,6 +10,7 @@ private:
 
     int score = 0; // Needs to be tracked because here of resets
     size_t currentPuzzleIndex = 0;
+    bool completed = false;
 
 public:
     PuzzleMode()
